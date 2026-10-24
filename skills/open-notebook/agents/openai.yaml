@@ -1,0 +1,6 @@
+interface:
+  display_name: "Open Notebook"
+  short_description: "Open and use the sample notebook"
+  default_prompt: "Open Notebook and show my notes."
+policy:
+  allow_implicit_invocation: false
