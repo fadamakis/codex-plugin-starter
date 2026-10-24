@@ -4,7 +4,9 @@
     "notebook": {
       "type": "stdio",
       "command": "node",
-      "args": ["${PLUGIN_ROOT}/dist/server/index.mjs"],
+      "args": [
+        "${PLUGIN_ROOT}/dist/server/index.mjs"
+      ],
       "cwd": "${PLUGIN_ROOT}"
     }
   }

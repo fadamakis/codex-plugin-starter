@@ -8,6 +8,17 @@
 
 The browser preview needs no Codex installation. Standard MCP tools can run headlessly in a compatible client. The sidebar requires host support for OpenAI global entrypoints. A local stdio server is not a web or mobile backend.
 
+## Supported systems and verification
+
+| Surface | Coverage |
+| --- | --- |
+| Build, packaging, and stdio tools | Linux, macOS, and Windows with Node 22; checked in CI |
+| Browser preview | Chromium tests at desktop, tablet, and phone widths, in light and dark themes |
+| Codex sidebar | Requires a desktop host supporting global MCP app entrypoints; the official AppBridge is tested automatically |
+| Web and mobile hosts | The local Node server requires a local executor; no hosted backend is included |
+
+CI does not exercise the native desktop sidebar. Verify activation in your target Codex app before claiming support for a derived plugin.
+
 ## Install a local build
 
 ```sh

@@ -27,7 +27,7 @@ git tag v0.2.0
 git push origin v0.2.0
 ```
 
-For the first unchanged example release, use `v0.1.0`. GitHub Actions checks types, model behavior, the production MCP server, manifests, and packaging on Linux, macOS, and Windows. Linux also runs the browser tests.
+Use the version in `plugin.json` for an unchanged template copy. GitHub Actions checks types, model behavior, the production MCP server, manifests, and packaging on Linux, macOS, and Windows. Linux also runs the browser tests.
 
 After all checks pass, the trusted tag job updates `releases` and creates a GitHub Release with the ZIP and `SHA256SUMS`. Publishing uses that repository's short-lived Actions token. It needs no personal token or OpenAI API key. The workflow uses immutable Action revisions and does not publish from fork pull requests.
 
