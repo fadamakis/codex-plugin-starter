@@ -1,0 +1,89 @@
+package.json
+  s_a092bfd9f100c1::t_5e4c6e3a8a8d26 1-53
+docs/architecture.md
+  s_a092bfd9f100c1::t_5e4c6e3a8a8d26 1-33
+licenses/README.md
+  s_a092bfd9f100c1::t_b34934e2b07039 1-9
+.gitattributes
+  s_a092bfd9f100c1::t_b34934e2b07039 1-2
+src/server/index.ts
+  s_a092bfd9f100c1::t_fc3e8ec9907b64 1-76
+.github/workflows/ci.yml
+  s_a092bfd9f100c1::t_5e4c6e3a8a8d26 1-70
+scripts/build-server.mjs
+  s_a092bfd9f100c1::t_b34934e2b07039 1-50
+.codex-plugin/plugin.json
+  s_a092bfd9f100c1::t_dff95f9cb90c98 1-29
+.github/ISSUE_TEMPLATE/bug_report.yml
+  s_a092bfd9f100c1::t_a90caaca76d0a7 1-20
+.github/pull_request_template.md
+  s_a092bfd9f100c1::t_c56f687f023651 1-11
+README.md
+  s_a092bfd9f100c1::t_44e1512e6a6f3d 1-63
+THIRD_PARTY_NOTICES.md
+  s_a092bfd9f100c1::t_272d0b0e98d165 1-1242
+docs/releasing.md
+  s_a092bfd9f100c1::t_1bd20973a57f16 1-47
+index.html
+  s_7f3eee6a1dd5c5::t_e704fa73e37a6a 1-13
+licenses/@cfworker__json-schema-4.1.1.txt
+  s_a092bfd9f100c1::t_335b5697f6000c 1-21
+package-lock.json
+  s_a092bfd9f100c1::t_8335d76cdf8a94 1-7271
+scripts/configure.mjs
+  s_7f3eee6a1dd5c5::t_c5f822a80dd86c 1-52
+scripts/manifest.mjs
+  s_7f3eee6a1dd5c5::t_b46b38dded77c6 1-18
+scripts/package.mjs
+  s_a092bfd9f100c1::t_6198600a8b82be 1-32
+scripts/publish.mjs
+  s_a092bfd9f100c1::t_7116f338067286 1-57
+scripts/test.mjs
+  s_a092bfd9f100c1::t_8671215d84fe37 1-5
+scripts/validate.mjs
+  s_7f3eee6a1dd5c5::t_087c930076522c 1-43
+skills/open-notebook/SKILL.md
+  s_7f3eee6a1dd5c5::t_e0ecfa91315f26 1-15
+skills/open-notebook/agents/openai.yaml
+  s_7f3eee6a1dd5c5::t_51b010a280955b 1-6
+src/app/Notebook.tsx
+  s_a092bfd9f100c1::t_7502d79739e55a 1-170
+src/app/main.tsx
+  s_7f3eee6a1dd5c5::t_169e66ede7493f 1-14
+src/app/styles.css
+  s_7f3eee6a1dd5c5::t_1a791b625e5bb7 1-120
+src/shared/notebook.ts
+  s_a092bfd9f100c1::t_c84ec34ecf41d1 1-60
+tests/configure.test.ts
+  s_a092bfd9f100c1::t_5d63ca905bbd4d 1-26
+tests/notebook.test.ts
+  s_7f3eee6a1dd5c5::t_f752e80301b84d 1-34
+tests/ui/notebook.spec.ts
+  s_a092bfd9f100c1::t_a0ce15f147aba5 1-71
+vite.config.ts
+  s_7f3eee6a1dd5c5::t_1bc1698fcc6356 1-38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8cd5f4a83828b9259c27ad2022b8b21f9d253bf2",
+  "prompts": {},
+  "sessions": {
+    "s_7f3eee6a1dd5c5": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a16d1f-4f17-7c80-9a87-9603cc1e9539",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Fotis Adamakis <1003546+fadamakis@users.noreply.github.com>"
+    },
+    "s_a092bfd9f100c1": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a16d36-fb03-7bc2-ade1-e53bbf5ef8a2",
+        "model": "gpt-6.1-sol"
+      },
+      "human_author": "Fotis Adamakis <1003546+fadamakis@users.noreply.github.com>"
+    }
+  }
+}
