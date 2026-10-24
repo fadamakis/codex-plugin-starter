@@ -128,3 +128,14 @@ test('OpenAI message extension works without a separate standard message capabil
   await expect(app.getByRole('status').filter({ hasText: 'Sent to Codex.' })).toBeVisible();
   expect(await page.evaluate(() => (window as unknown as { hostMessages: unknown[] }).hostMessages)).toHaveLength(1);
 });
+
+test('notes saved outside the panel appear when the user refreshes', async ({ page }) => {
+  await page.goto('/tests/host.html');
+  const app = page.frameLocator('#plugin');
+  await expect(app.getByRole('article')).toHaveCount(3);
+  await page.evaluate(() => (window as unknown as { addHostNote: () => void }).addHostNote());
+  await expect(app.getByRole('heading', { name: 'A plan saved from the conversation' })).toHaveCount(0);
+  await app.getByRole('button', { name: 'Refresh notes', exact: true }).click();
+  await expect(app.getByRole('heading', { name: 'A plan saved from the conversation' })).toBeVisible();
+  await expect(app.getByRole('article')).toHaveCount(4);
+});

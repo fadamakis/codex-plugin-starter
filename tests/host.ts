@@ -2,6 +2,9 @@ import { AppBridge, PostMessageTransport } from '@modelcontextprotocol/ext-apps/
 import { createNotebook } from '../src/shared/notebook';
 
 const notebook = createNotebook();
+(window as unknown as { addHostNote: () => void }).addHostNote = () => {
+  notebook.create({ title: 'A plan saved from the conversation', body: 'Synthetic host-side change for the refresh test.', kind: 'draft' });
+};
 const iframe = document.getElementById('plugin') as HTMLIFrameElement;
 const calls: string[] = [];
 (window as unknown as { toolCalls: string[] }).toolCalls = calls;

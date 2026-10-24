@@ -172,8 +172,12 @@ export function Notebook({ bridge }: { bridge: NotebookBridge }) {
 
         <section aria-labelledby="notes-heading" className="notes-section">
           <div className="notes-toolbar"><div className="section-title"><h2 id="notes-heading">{view === 'all' ? 'All notes' : 'Favorites'}</h2><span>{filtered.length}</span></div>
-            <Input aria-label="Search notes" placeholder="Find a thought…" startAdornment={<Search />} value={query} size="lg" className="search-input"
-              onChange={event => setQuery(event.target.value)} /></div>
+            <div className="notes-actions">
+              <Button color="secondary" variant="ghost" size="sm" disabled={!snapshot} loading={busy}
+                onClick={() => { void run(() => bridge.call('notebook_open', {}), 'Notes refreshed.'); }}>Refresh notes</Button>
+              <Input aria-label="Search notes" placeholder="Find a thought…" startAdornment={<Search />} value={query} size="lg" className="search-input"
+                onChange={event => setQuery(event.target.value)} />
+            </div></div>
 
           {error && <div className="error-banner" role="alert"><p>{error}</p>
             <Button color="secondary" variant="outline" size="sm" loading={busy} onClick={() => { void run(() => bridge.call('notebook_open', {})); }}>Reload notes</Button></div>}

@@ -80,6 +80,7 @@ svg { flex-shrink: 0; }
 .section-title { display: flex; align-items: center; gap: 10px; }
 .section-title h2 { margin: 0; font-size: 15px; font-weight: 500; letter-spacing: -.2px; }
 .section-title > span { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 5px; background: var(--canvas); color: var(--muted); font-size: 10px; }
+.notes-actions { display: flex; align-items: center; justify-content: flex-end; flex-wrap: wrap; gap: 10px; min-width: 0; }
 .search-input { width: 212px; font-size: 12px; }
 .notes-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
 .note-card { display: flex; flex-direction: column; min-height: 226px; border: 1px solid var(--line); border-radius: 12px; padding: 16px 18px 17px; transition: border-color .15s; }
