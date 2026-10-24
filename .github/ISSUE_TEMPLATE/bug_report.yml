@@ -1,0 +1,20 @@
+name: Bug report
+description: Something in the starter did not work as expected.
+body:
+  - type: textarea
+    attributes:
+      label: What happened?
+      description: Include the expected behavior and steps to reproduce. Use synthetic data.
+    validations:
+      required: true
+  - type: input
+    attributes:
+      label: Environment
+      placeholder: OS, Node version, Codex version, starter version
+    validations:
+      required: true
+  - type: textarea
+    attributes:
+      label: Relevant output
+      description: Remove credentials, personal paths, and private content before sharing.
+      render: text

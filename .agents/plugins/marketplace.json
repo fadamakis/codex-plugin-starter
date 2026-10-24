@@ -1,0 +1,12 @@
+{
+  "name": "codex-plugin-starter",
+  "interface": { "displayName": "Codex Plugin Starter" },
+  "plugins": [
+    {
+      "name": "notebook",
+      "source": { "source": "local", "path": "./" },
+      "policy": { "installation": "AVAILABLE", "authentication": "ON_INSTALL" },
+      "category": "Developer Tools"
+    }
+  ]
+}
