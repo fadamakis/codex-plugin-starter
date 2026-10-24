@@ -7,6 +7,7 @@ import { BookOpen, ChevronRight, CloseBold, FileDocument, Moon, Plus, Search, St
 import manifest from '../../plugin.json';
 import { noteInput, type Note, type NoteInput, type Snapshot } from '../shared/notebook';
 import type { NotebookBridge } from './bridge';
+import { buildWorkPrompt } from './work-with-codex';
 
 type Draft = NoteInput & { id?: string };
 const blankNote = (): Draft => ({ title: '', body: '', kind: 'idea' });
@@ -76,6 +77,10 @@ export function Notebook({ bridge }: { bridge: NotebookBridge }) {
   const [error, setError] = useState('');
   const [notice, setNotice] = useState('');
   const [dark, setDark] = useState(false);
+  const [handoff, setHandoff] = useState<{
+    noteId: string; prompt: string; state: 'sending' | 'sent' | 'preview' | 'error'; message: string;
+  } | null>(null);
+  const sending = useRef(false);
 
   useEffect(() => {
     const unsubscribe = bridge.subscribe(setSnapshot);
@@ -95,6 +100,32 @@ export function Notebook({ bridge }: { bridge: NotebookBridge }) {
   }
   function favorite(note: Note) {
     void run(() => bridge.call('notebook_favorite', { id: note.id, favorite: !note.favorite }), note.favorite ? 'Removed from favorites.' : 'Added to favorites.');
+  }
+  async function workWithCodex(note: Note) {
+    if (sending.current) return;
+    sending.current = true;
+    const prompt = buildWorkPrompt(note);
+    setHandoff({ noteId: note.id, prompt, state: 'sending', message: '' });
+    try {
+      const sent = await bridge.sendMessage(prompt);
+      setHandoff({ noteId: note.id, prompt, state: sent ? 'sent' : 'preview', message: sent
+        ? 'Sent to Codex. Continue in the conversation.'
+        : bridge.preview ? 'This is the browser preview. Copy this prompt into Codex to continue.'
+        : 'This app cannot send messages here. Copy this prompt into Codex to continue.' });
+    } catch {
+      setHandoff({ noteId: note.id, prompt, state: 'error', message: 'Could not send to Codex. Try again or copy the prompt below.' });
+    } finally {
+      sending.current = false;
+    }
+  }
+  async function copyPrompt() {
+    if (!handoff) return;
+    try {
+      await navigator.clipboard.writeText(handoff.prompt);
+      setNotice('Prompt copied. Paste it into Codex to continue.');
+    } catch {
+      setNotice('Could not copy the prompt. Select the text and copy it manually.');
+    }
   }
   function toggleTheme() {
     const next = !dark; setDark(next);
@@ -157,6 +188,20 @@ export function Notebook({ bridge }: { bridge: NotebookBridge }) {
                 aria-label={`${note.favorite ? 'Remove' : 'Add'} ${note.title} ${note.favorite ? 'from' : 'to'} favorites`} onClick={() => favorite(note)}>{note.favorite ? <StarFilled /> : <Star />}</Button></div>
             <button type="button" className="note-open" onClick={() => { setError(''); setDraft({ ...note }); }} disabled={busy} aria-label={`Edit ${note.title}`}>
               <h3>{note.title}</h3><p>{note.body}</p></button>
+            <div className="note-ai">
+              <Button color="secondary" variant="outline" size="sm" disabled={busy || handoff?.state === 'sending'}
+                loading={handoff?.noteId === note.id && handoff.state === 'sending'}
+                aria-label={`Work on ${note.title} with Codex`} onClick={() => { void workWithCodex(note); }}>
+                Work on this with Codex
+              </Button>
+              {handoff?.noteId === note.id && handoff.state !== 'sending' && <div className="ai-handoff">
+                <p role={handoff.state === 'error' ? 'alert' : 'status'}>{handoff.message}</p>
+                {(handoff.state === 'preview' || handoff.state === 'error') && <>
+                  <Textarea aria-label={`Prompt for ${note.title}`} value={handoff.prompt} readOnly rows={6} size="sm" />
+                  <Button color="secondary" variant="ghost" size="sm" onClick={() => { void copyPrompt(); }}>Copy prompt</Button>
+                </>}
+              </div>}
+            </div>
             <div className="note-footer"><span>{new Intl.DateTimeFormat('en', { month: 'short', day: 'numeric' }).format(new Date(note.updatedAt))}</span><span>{note.body.trim().split(/\s+/).length} words</span></div>
           </article>)}</div>
         </section>

@@ -69,3 +69,62 @@ test('built UI receives its initial data through the official MCP AppBridge', as
   const calls = await page.evaluate(() => (window as unknown as { toolCalls: string[] }).toolCalls);
   expect(calls).toEqual(['notebook_favorite']);
 });
+
+for (const width of [1440, 390]) {
+  test(`selected note is handed to Codex through the real AppBridge at ${width}px`, async ({ page }) => {
+    await page.setViewportSize({ width, height: 1000 });
+    await page.goto('/tests/host.html');
+    const app = page.frameLocator('#plugin');
+    await app.getByRole('button', { name: 'Work on Fewer things, done thoughtfully with Codex', exact: true }).click();
+    await expect(app.getByRole('status').filter({ hasText: 'Sent to Codex.' })).toBeVisible();
+    const messages = await page.evaluate(() => (window as unknown as { hostMessages: { role: string; content: { text: string }[] }[] }).hostMessages);
+    expect(messages).toHaveLength(1);
+    expect(messages[0].role).toBe('user');
+    const prompt = messages[0].content[0].text;
+    const note = JSON.parse(prompt.slice(prompt.indexOf('{')));
+    expect(note).toMatchObject({ id: 'fewer-things', title: 'Fewer things, done thoughtfully', kind: 'draft' });
+    expect(note.body).toContain('One useful interaction.');
+    expect(prompt).toContain('Keep the original note unchanged.');
+    expect(await page.evaluate(() => (window as unknown as { toolCalls: string[] }).toolCalls)).toEqual([]);
+    await expect(app.getByRole('article')).toHaveCount(3);
+    expect(await app.locator('html').evaluate(element => element.scrollWidth <= element.clientWidth)).toBe(true);
+  });
+}
+
+test('browser preview offers the selected prompt for copying without claiming AI ran', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write']);
+  await page.goto('/');
+  await page.getByRole('button', { name: 'Work on Start with a small idea with Codex', exact: true }).click();
+  const prompt = page.getByRole('textbox', { name: 'Prompt for Start with a small idea' });
+  await expect(prompt).toBeVisible();
+  await expect(prompt).toHaveValue(/"id": "small-idea"/);
+  await expect(page.getByText('Sent to Codex.', { exact: false })).toHaveCount(0);
+  await page.getByRole('button', { name: 'Copy prompt', exact: true }).click();
+  await expect(page.getByRole('status').filter({ hasText: 'Prompt copied.' })).toBeVisible();
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(await prompt.inputValue());
+});
+
+for (const mode of ['unsupported', 'reject']) {
+  test(`host ${mode} leaves a usable prompt and the original note intact`, async ({ page }) => {
+    await page.goto(`/tests/host.html?messages=${mode}`);
+    const app = page.frameLocator('#plugin');
+    const action = app.getByRole('button', { name: 'Work on Start with a small idea with Codex', exact: true });
+    await action.click();
+    await expect(app.getByRole('textbox', { name: 'Prompt for Start with a small idea' })).toBeVisible();
+    await expect(app.getByRole('button', { name: 'Copy prompt', exact: true })).toBeVisible();
+    await expect(action).toBeEnabled();
+    await expect(app.getByText('Sent to Codex.', { exact: false })).toHaveCount(0);
+    if (mode === 'reject') await expect(app.getByRole('alert')).toContainText('Could not send to Codex.');
+    const messages = await page.evaluate(() => (window as unknown as { hostMessages: unknown[] }).hostMessages);
+    expect(messages).toHaveLength(mode === 'unsupported' ? 0 : 1);
+    expect(await page.evaluate(() => (window as unknown as { toolCalls: string[] }).toolCalls)).toEqual([]);
+  });
+}
+
+test('OpenAI message extension works without a separate standard message capability', async ({ page }) => {
+  await page.goto('/tests/host.html?messages=extended');
+  const app = page.frameLocator('#plugin');
+  await app.getByRole('button', { name: 'Work on Start with a small idea with Codex', exact: true }).click();
+  await expect(app.getByRole('status').filter({ hasText: 'Sent to Codex.' })).toBeVisible();
+  expect(await page.evaluate(() => (window as unknown as { hostMessages: unknown[] }).hostMessages)).toHaveLength(1);
+});

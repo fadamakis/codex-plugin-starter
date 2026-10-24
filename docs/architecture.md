@@ -28,6 +28,8 @@ Import the foundation stylesheet before SDK components, as shown in `main.tsx`. 
 
 The initial `notebook_open` tool result supplies the UI's data. Subsequent edits call server tools and replace the visible snapshot with a validated result. All notes render as React text; HTML in a note is not executed.
 
+The **Work on this with Codex** action builds a prompt from the selected note only. `bridge.sendMessage()` checks the host's text-message capability and uses the standard MCP Apps `app.sendMessage()` method, which sends a `ui/message` request. On desktop a global sidebar app targets its own conversation. A rejected message remains an error, and unsupported hosts get a copyable prompt. No model API call or inference runs in the React app or sample server.
+
 The preview intentionally resets on reload; the MCP server resets when its process restarts. This makes the template safe to explore without a database. Persistence is an explicit extension point.
 
 The pinned npm overrides keep the SDKs' transitive Lodash, KaTeX, and Zod versions on patched releases. Revisit these overrides when upgrading the SDKs and rerun the behavior, UI, and dependency checks.

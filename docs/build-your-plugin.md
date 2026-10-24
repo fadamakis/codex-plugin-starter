@@ -35,6 +35,8 @@ Keep host interactions in `bridge.ts`. Register the initial tool-result handler 
 
 For a different domain, change both server tool registrations and client calls, then replace the sample skill. Preserve a useful text/structured result for people using the tool without UI.
 
+The sample's **Work on this with Codex** button demonstrates the reverse direction: UI to conversation. Adapt `src/app/work-with-codex.ts` to build a prompt for your own domain. Keep this user initiated, include only the selected item's context, and preserve the copyable fallback when the host does not support text messages. The host handles AI responses; the plugin does not call a model API.
+
 ## 5. Verify and package
 
 ```sh

@@ -91,6 +91,13 @@ svg { flex-shrink: 0; }
 .note-open h3 { margin: 0 0 10px; font-size: 15px; font-weight: 500; line-height: 1.45; letter-spacing: -.25px; }
 .note-open p { margin: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; color: var(--muted); font-size: 12px; line-height: 1.75; white-space: pre-line; overflow-wrap: anywhere; }
 .note-footer { display: flex; align-items: center; justify-content: space-between; margin-top: 23px; color: var(--muted); font-size: 10px; opacity: .85; }
+.note-ai { margin-top: 18px; }
+.note-ai > button { max-width: 100%; }
+.ai-handoff { display: grid; gap: 10px; margin-top: 12px; min-width: 0; }
+.ai-handoff p { margin: 0; color: var(--muted); font-size: 12px; line-height: 1.6; overflow-wrap: anywhere; }
+.ai-handoff p[role="alert"] { color: var(--color-text-danger, #b53a3a); }
+.ai-handoff textarea { width: 100%; resize: vertical; }
+.ai-handoff > button { justify-self: start; }
 .page-footer { display: flex; justify-content: space-between; gap: 16px; margin-top: 31px; padding-top: 20px; border-top: 1px solid var(--line); color: var(--muted); font-size: 10px; line-height: 1.5; }
 .empty-state { padding: 40px 18px; text-align: center; color: var(--muted); font-size: 13px; }
 .empty-state h3 { color: var(--ink); margin: 12px 0 6px; font-weight: 500; }

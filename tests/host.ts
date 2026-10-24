@@ -5,7 +5,13 @@ const notebook = createNotebook();
 const iframe = document.getElementById('plugin') as HTMLIFrameElement;
 const calls: string[] = [];
 (window as unknown as { toolCalls: string[] }).toolCalls = calls;
-const bridge = new AppBridge(null, { name: 'Starter test host', version: '1.0.0' }, { serverTools: {} }, { hostContext: { theme: 'light', displayMode: 'fullscreen' } });
+const messages: unknown[] = [];
+(window as unknown as { hostMessages: unknown[] }).hostMessages = messages;
+const messageMode = new URLSearchParams(window.location.search).get('messages');
+const bridge = new AppBridge(null, { name: 'Starter test host', version: '1.0.0' }, {
+  serverTools: {}, ...(messageMode === 'extended' ? { experimental: { 'openai/message': {} } }
+    : messageMode === 'unsupported' ? {} : { message: { text: {} } }),
+}, { hostContext: { theme: 'light', displayMode: 'fullscreen' } });
 const result = (snapshot: ReturnType<typeof notebook.snapshot>) => ({ content: [{ type: 'text' as const, text: 'Synthetic test data.' }], structuredContent: snapshot });
 bridge.oncalltool = async ({ name, arguments: args }) => {
   calls.push(name);
@@ -14,6 +20,10 @@ bridge.oncalltool = async ({ name, arguments: args }) => {
   if (name === 'notebook_favorite') return result(notebook.favorite(args));
   if (name === 'notebook_open') return result(notebook.snapshot());
   throw new Error('Unknown sample tool.');
+};
+bridge.onmessage = async params => {
+  messages.push(params);
+  return messageMode === 'reject' ? { isError: true } : {};
 };
 bridge.oninitialized = async () => {
   await bridge.sendToolInput({ arguments: {} });

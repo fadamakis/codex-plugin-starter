@@ -22,6 +22,12 @@ Open the local URL printed by Vite. Create a note, search, save a favorite, or s
 
 **[Build your own plugin](docs/build-your-plugin.md)** walks through identity, tools, UI, installation, and release.
 
+## Work on a note with Codex
+
+Each note has a **Work on this with Codex** button. In a compatible host it sends the selected note to the app's current conversation and asks Codex to propose a plan. Continue there to refine the plan or ask Codex to save a new draft using Notebook's tools. The button leaves the original note unchanged.
+
+The browser preview and hosts without text-message support show the exact prompt with a **Copy prompt** action. They do not run AI. The plugin uses the host's conversation, so it needs no separate OpenAI API key. A successful handoff means the host accepted the message, not that the AI finished working.
+
 ## What is included
 
 - An elegant responsive sample with a sidebar, searchable notes, favorites, and an accessible editor.

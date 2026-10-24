@@ -8,12 +8,13 @@ export interface NotebookBridge {
   subscribe(listener: (snapshot: Snapshot) => void): () => void;
   connect(): Promise<void>;
   call(name: ToolName, args: Record<string, unknown>): Promise<Snapshot>;
+  sendMessage(prompt: string): Promise<boolean>;
   close(): void;
 }
 
 export function hostBridge(): NotebookBridge {
   const app = new App({ name: manifest.name, version: manifest.version });
-  new OpenAIExtensions(app);
+  const extensions = new OpenAIExtensions(app);
   const listeners = new Set<(snapshot: Snapshot) => void>();
   const publish = (snapshot: Snapshot) => { listeners.forEach(listener => listener(snapshot)); return snapshot; };
   function applyContext() {
@@ -39,6 +40,14 @@ export function hostBridge(): NotebookBridge {
       applyContext();
     },
     async call(name, args) { return publish(readSnapshot(await app.callServerTool({ name, arguments: args }))); },
+    async sendMessage(prompt) {
+      const message = extensions.message;
+      if (!app.getHostCapabilities()?.message?.text && !message) return false;
+      const params = { role: 'user' as const, content: [{ type: 'text' as const, text: prompt }] };
+      const result = message ? await message.send(params) : await app.sendMessage(params);
+      if (result.isError) throw new Error('Codex could not accept the message. Try again or copy the prompt.');
+      return true;
+    },
     close() { void app.close(); listeners.clear(); },
   };
 }
@@ -58,6 +67,7 @@ export function previewBridge(): NotebookBridge {
       listeners.forEach(listener => listener(snapshot));
       return snapshot;
     },
+    async sendMessage() { return false; },
     close() { listeners.clear(); },
   };
 }
