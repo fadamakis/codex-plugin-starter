@@ -16,6 +16,8 @@ const readingItemInput = z.object({
 
 Keep the ID, favorite flag, and timestamp. Update the data model to create, edit, and favorite reading items. You'll need to make these changes yourself. The starter still contains the Notebook example.
 
+Update the SQLite schema and queries in `src/server/storage.ts` for the reading-item fields. Rename the plugin before testing it so its database is separate from Notebook's. If you distribute a later schema change, add a migration for existing data.
+
 Next, update the tools in `src/server/index.ts`. Rename them to `reading_open`, `reading_create`, `reading_update`, and `reading_favorite`. Update their input schemas and descriptions too. Codex uses these descriptions to decide when to call each tool.
 
 Update the matching calls in `src/app/bridge.ts`, including the browser preview code. Update the shared types to use the new tool names.

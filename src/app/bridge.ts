@@ -1,7 +1,7 @@
 import { App, applyDocumentTheme, applyHostStyleVariables } from '@modelcontextprotocol/ext-apps';
 import { OpenAIExtensions } from '@openai/mcp-extensions/app';
 import manifest from '../../plugin.json';
-import { createNotebook, readSnapshot, type Snapshot, type ToolName } from '../shared/notebook';
+import { createMemoryNoteStore, createNotebook, readSnapshot, sampleNotes, snapshotSchema, type Snapshot, type ToolName } from '../shared/notebook';
 
 export interface NotebookBridge {
   preview: boolean;
@@ -52,15 +52,31 @@ export function hostBridge(): NotebookBridge {
   };
 }
 
-// Development-only transport. The production build removes this branch and seed adapter.
+// Development-only transport. Preview data stays separate from the installed plugin.
 export function previewBridge(): NotebookBridge {
-  const notebook = createNotebook();
+  let notebook: ReturnType<typeof createNotebook> | undefined;
+  function getNotebook() {
+    if (!notebook) {
+      try {
+        const key = `${manifest.name}:browser-preview`;
+        const saved = localStorage.getItem(key);
+        const initial = saved ? snapshotSchema.parse(JSON.parse(saved)).notes : sampleNotes();
+        notebook = createNotebook(undefined, createMemoryNoteStore(initial, notes => {
+          localStorage.setItem(key, JSON.stringify({ notes }));
+        }));
+      } catch {
+        throw new Error('Could not read saved preview notes. Check local storage in this browser.');
+      }
+    }
+    return notebook;
+  }
   const listeners = new Set<(snapshot: Snapshot) => void>();
   return {
     preview: true,
     subscribe(listener) { listeners.add(listener); return () => { listeners.delete(listener); }; },
-    async connect() { listeners.forEach(listener => listener(notebook.snapshot())); },
+    async connect() { const snapshot = getNotebook().snapshot(); listeners.forEach(listener => listener(snapshot)); },
     async call(name, args) {
+      const notebook = getNotebook();
       const snapshot = name === 'notebook_create' ? notebook.create(args)
         : name === 'notebook_update' ? notebook.update(args)
         : name === 'notebook_favorite' ? notebook.favorite(args) : notebook.snapshot();

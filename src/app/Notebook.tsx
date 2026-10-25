@@ -210,7 +210,7 @@ export function Notebook({ bridge }: { bridge: NotebookBridge }) {
           </article>)}</div>
         </section>
 
-        <footer className="page-footer"><span>{bridge.preview ? 'Browser preview. Changes reset on reload.' : 'Sample data. Changes reset with the server.'}</span><span>Made with OpenAI UI</span></footer>
+        <footer className="page-footer"><span>{bridge.preview ? 'Browser preview. Saved in this browser.' : 'Notes saved locally with SQLite.'}</span><span>Made with OpenAI UI</span></footer>
       </div>
       <p role="status" className="sr-only">{notice}</p>
     </main>

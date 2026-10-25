@@ -8,3 +8,6 @@ playwright-report/
 !.env.example
 .DS_Store
 *.log
+
+# Local notebook data belongs outside the plugin package.
+*.sqlite3*

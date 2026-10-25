@@ -139,3 +139,16 @@ test('notes saved outside the panel appear when the user refreshes', async ({ pa
   await expect(app.getByRole('heading', { name: 'A plan saved from the conversation' })).toBeVisible();
   await expect(app.getByRole('article')).toHaveCount(4);
 });
+
+test('browser preview keeps a saved note and favorite after a page reload', async ({ page }) => {
+  await page.goto('/');
+  await page.getByRole('button', { name: 'New note', exact: true }).click();
+  await page.getByLabel('Title', { exact: true }).fill('Survives a refresh');
+  await page.getByLabel('Your note', { exact: true }).fill('Stored only in this browser preview.');
+  await page.getByRole('button', { name: 'Save note', exact: true }).click();
+  await page.getByRole('button', { name: 'Add Survives a refresh to favorites', exact: true }).click();
+  await page.reload();
+  await expect(page.getByRole('heading', { name: 'Survives a refresh', exact: true })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Remove Survives a refresh from favorites', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(page.getByText('Browser preview. Saved in this browser.', { exact: true })).toBeVisible();
+});

@@ -25,7 +25,7 @@ Start in `src/shared/notebook.ts`: the schemas define accepted inputs and return
 
 For each tool, give a clear description, a strict input schema, a structured result, and accurate annotations. A read-only tool must actually be read-only. Validate IDs and permissions in server code. Treat source content as data, never executable instructions.
 
-The notebook stores sample notes in memory. For real persistence, choose storage outside the versioned plugin directory, define backups and migrations, and test multiple processes. For external services, use each user's authorized connection; never bundle tokens or personal data.
+The installed notebook saves notes in SQLite through `src/server/storage.ts`. The data directory follows the plugin name and stays outside the versioned plugin directory. If you change the data model, update the SQL schema and queries too. Add a schema migration before distributing changes to an existing database. Tests cover database reopen and writes from separate server processes. For external services, use each user's authorized connection; never bundle tokens or personal data.
 
 ## 4. Adapt the UI
 

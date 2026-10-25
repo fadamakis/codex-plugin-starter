@@ -6,14 +6,20 @@ import fs from 'node:fs';
 import path from 'node:path';
 import os from 'node:os';
 
-const client = new Client({ name: 'starter-smoke-test', version: '1.0.0' });
-const temporary = process.argv[2] ? fs.mkdtempSync(path.join(os.tmpdir(), 'starter-clean-install-')) : null;
-const root = temporary ?? process.cwd();
-try {
-  if (temporary) fs.cpSync(path.resolve(process.argv[2]), root, { recursive: true });
-  const manifest = JSON.parse(fs.readFileSync(path.join(root, 'plugin.json'), 'utf8'));
+const temporary = fs.mkdtempSync(path.join(os.tmpdir(), 'starter-clean-install-'));
+const root = process.argv[2] ? path.join(temporary, 'plugin') : process.cwd();
+const clients: Client[] = [];
+async function connect() {
+  const client = new Client({ name: 'starter-smoke-test', version: '1.0.0' });
+  clients.push(client);
   await client.connect(new StdioClientTransport({ command: process.execPath, args: [path.join(root, 'dist/server/index.mjs')], cwd: root, stderr: 'pipe',
-    env: { PATH: process.env.PATH ?? '', HOME: root, TMPDIR: root, TMP: root, TEMP: root, SystemRoot: process.env.SystemRoot ?? '' } }));
+    env: { PATH: process.env.PATH ?? '', HOME: temporary, NOTEBOOK_DATA_DIR: path.join(temporary, 'data'), TMPDIR: temporary, TMP: temporary, TEMP: temporary, SystemRoot: process.env.SystemRoot ?? '' } }));
+  return client;
+}
+try {
+  if (process.argv[2]) fs.cpSync(path.resolve(process.argv[2]), root, { recursive: true });
+  const manifest = JSON.parse(fs.readFileSync(path.join(root, 'plugin.json'), 'utf8'));
+  const client = await connect();
   assert.equal(client.getServerVersion()?.version, manifest.version);
   const tools = await client.listTools();
   assert.deepEqual(tools.tools.map(tool => tool.name).sort(), ['notebook_create', 'notebook_favorite', 'notebook_open', 'notebook_update']);
@@ -34,8 +40,18 @@ try {
   assert.equal((open._meta?.ui as { resourceUri: string }).resourceUri, resources.resources[0].uri);
   const ui = await client.readResource({ uri: resources.resources[0].uri });
   assert.ok(ui.contents.some(content => 'text' in content && content.text.includes('<!doctype html>')));
-  console.log(`MCP smoke passed: ${tools.tools.length} tools, structured results, mutations, and a self-contained UI.`);
-} finally {
+  const second = await connect();
+  await Promise.all([client, second].map((connection, index) => connection.callTool({ name: 'notebook_create', arguments: { title: `Process ${index}`, body: 'Concurrent write.', kind: 'draft' } })));
+  const shared = readSnapshot(await second.callTool({ name: 'notebook_open', arguments: {} }));
+  assert.equal(shared.notes.length, 6);
+  assert.ok(shared.notes.some(note => note.title === 'Process 0'));
+  assert.ok(shared.notes.some(note => note.title === 'Process 1'));
   await client.close();
-  if (temporary) fs.rmSync(temporary, { recursive: true, force: true });
+  await second.close();
+  const restarted = await connect();
+  assert.deepEqual(readSnapshot(await restarted.callTool({ name: 'notebook_open', arguments: {} })), shared);
+  console.log(`MCP smoke passed: ${tools.tools.length} tools, persistent notes across processes and restarts, and a self-contained UI.`);
+} finally {
+  await Promise.all(clients.map(client => client.close()));
+  fs.rmSync(temporary, { recursive: true, force: true });
 }

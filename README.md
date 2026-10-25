@@ -18,7 +18,7 @@ npm ci
 npm run dev
 ```
 
-Open the local URL printed by Vite. Create a note, search, save a favorite, or switch appearance. The preview uses synthetic in-memory data and needs no API key.
+Open the local URL printed by Vite. Create a note, search, save a favorite, or switch appearance. The preview starts with sample notes, saves changes in this browser, and needs no API key.
 
 **[Build your own plugin](docs/build-your-plugin.md)** walks through identity, tools, UI, installation, and release. For a domain change, try the [reading-list exercise](docs/reading-list.md).
 
@@ -27,6 +27,12 @@ Open the local URL printed by Vite. Create a note, search, save a favorite, or s
 Each note has a **Work on this with Codex** button. In a compatible host it sends the selected note to the app's current conversation and asks Codex to propose a plan. Continue there to refine the plan or ask Codex to save a new draft using Notebook's tools. The button leaves the original note unchanged. If a note saved from the conversation is not visible in the panel, use **Refresh notes** to fetch the current server state.
 
 The browser preview and hosts without text-message support show the exact prompt with a **Copy prompt** action. They do not run AI. The plugin uses the host's conversation, so it needs no separate OpenAI API key. A successful handoff means the host accepted the message, not that the AI finished working.
+
+## Where notes are saved
+
+The installed plugin stores notes in SQLite, outside the plugin directory. Notes survive app restarts and plugin updates. The browser preview uses separate local storage, so refreshing the page keeps its notes too.
+
+See [storage and privacy](docs/privacy.md) for database paths, backups, and removal.
 
 ## What is included
 
