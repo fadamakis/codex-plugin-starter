@@ -2,7 +2,7 @@
 
 ## Requirements
 
-- Node.js 22.13 or newer. Development also needs npm.
+- Node.js 22.13 or newer, which includes SQLite without a launch flag. The SQLite module is still marked experimental in Node 22. Development also needs npm.
 - A current Codex desktop app for the interactive sidebar. OpenAI's entrypoint guidance identifies desktop build `26.928.20710` as the minimum for these extension APIs; prefer the current release.
 - Codex CLI with plugin marketplace commands for the command examples below.
 
@@ -29,7 +29,7 @@ codex plugin marketplace add ./artifacts/plugin
 codex plugin add notebook@codex-plugin-starter
 ```
 
-Use your configured names after adapting the template. Open a new chat if newly installed tools do not appear. Open Notebook from the sidebar in a supported desktop app.
+If this marketplace is already registered from GitHub, run `codex plugin marketplace remove codex-plugin-starter` before adding the local source. This removes its registration, not the saved notes. Use your configured names after adapting the template. Open a new chat if newly installed tools do not appear. Open Notebook from the sidebar in a supported desktop app.
 
 ## Install the published example
 
@@ -60,6 +60,6 @@ For a local rebuild, repeat packaging and the supported installation flow. Editi
 codex plugin remove notebook@codex-plugin-starter
 ```
 
-This example keeps no persistent user database. A plugin you derive from it must document its own storage and deletion policy.
+Uninstalling keeps the local SQLite database. See [storage and privacy](privacy.md) for the directory to back up or remove.
 
 See [Codex plugin commands](https://learn.chatgpt.com/docs/cli/reference) and [MCP Extensions patterns](https://github.com/openai/mcp-extensions/blob/main/docs/patterns.md).

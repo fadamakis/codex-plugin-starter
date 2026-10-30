@@ -1,6 +1,6 @@
 {
   "name": "notebook",
-  "version": "0.1.1",
+  "version": "0.1.4",
   "description": "A small notebook that demonstrates a Codex plugin with an OpenAI UI.",
   "author": {
     "name": "Fotis Adamakis"

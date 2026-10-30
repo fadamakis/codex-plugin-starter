@@ -242,10 +242,10 @@ function mergeDefs(...defs) {
 function cloneDef(schema) {
   return mergeDefs(schema._zod.def);
 }
-function getElementAtPath(obj, path) {
-  if (!path)
+function getElementAtPath(obj, path3) {
+  if (!path3)
     return obj;
-  return path.reduce((acc, key) => acc?.[key], obj);
+  return path3.reduce((acc, key) => acc?.[key], obj);
 }
 function promiseAllObject(promisesObj) {
   const keys = Object.keys(promisesObj);
@@ -504,11 +504,11 @@ function explicitlyAborted(x, startIndex = 0) {
   }
   return false;
 }
-function prefixIssues(path, issues) {
+function prefixIssues(path3, issues) {
   return issues.map((iss) => {
     var _a3;
     (_a3 = iss).path ?? (_a3.path = []);
-    iss.path.unshift(path);
+    iss.path.unshift(path3);
     return iss;
   });
 }
@@ -1041,16 +1041,16 @@ function flattenError(error62, mapper = (issue2) => issue2.message) {
 }
 function formatError(error62, mapper = (issue2) => issue2.message) {
   const fieldErrors = { _errors: [] };
-  const processError = (error63, path = []) => {
+  const processError = (error63, path3 = []) => {
     for (const issue2 of error63.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path3, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path3, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path3, ...issue2.path]);
       } else {
-        const fullpath = [...path, ...issue2.path];
+        const fullpath = [...path3, ...issue2.path];
         if (fullpath.length === 0) {
           fieldErrors._errors.push(mapper(issue2));
         } else {
@@ -1089,17 +1089,17 @@ function formatError(error62, mapper = (issue2) => issue2.message) {
 }
 function treeifyError(error62, mapper = (issue2) => issue2.message) {
   const result = { errors: [] };
-  const processError = (error63, path = []) => {
+  const processError = (error63, path3 = []) => {
     var _a3;
     for (const issue2 of error63.issues) {
       if (issue2.code === "invalid_union" && issue2.errors.length) {
-        issue2.errors.map((issues) => processError({ issues }, [...path, ...issue2.path]));
+        issue2.errors.map((issues) => processError({ issues }, [...path3, ...issue2.path]));
       } else if (issue2.code === "invalid_key") {
-        processError({ issues: issue2.issues }, [...path, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path3, ...issue2.path]);
       } else if (issue2.code === "invalid_element") {
-        processError({ issues: issue2.issues }, [...path, ...issue2.path]);
+        processError({ issues: issue2.issues }, [...path3, ...issue2.path]);
       } else {
-        const fullpath = [...path, ...issue2.path];
+        const fullpath = [...path3, ...issue2.path];
         if (fullpath.length === 0) {
           result.errors.push(mapper(issue2));
           continue;
@@ -1138,8 +1138,8 @@ function treeifyError(error62, mapper = (issue2) => issue2.message) {
 }
 function toDotPath(_path) {
   const segs = [];
-  const path = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
-  for (const seg of path) {
+  const path3 = _path.map((seg) => typeof seg === "object" ? seg.key : seg);
+  for (const seg of path3) {
     if (typeof seg === "number")
       segs.push(`[${seg}]`);
     else if (typeof seg === "symbol")
@@ -19171,13 +19171,13 @@ function resolveRef(ref, ctx) {
   if (!ref.startsWith("#")) {
     throw new Error("External $ref is not supported, only local refs (#/...) are allowed");
   }
-  const path = ref.slice(1).split("/").filter(Boolean);
-  if (path.length === 0) {
+  const path3 = ref.slice(1).split("/").filter(Boolean);
+  if (path3.length === 0) {
     return ctx.rootSchema;
   }
   const defsKey = ctx.version === "draft-2020-12" ? "$defs" : "definitions";
-  if (path[0] === defsKey) {
-    const key = path[1] === void 0 ? void 0 : decodeJSONPointerSegment(path[1]);
+  if (path3[0] === defsKey) {
+    const key = path3[1] === void 0 ? void 0 : decodeJSONPointerSegment(path3[1]);
     if (!key || !ctx.defs[key]) {
       throw new Error(`Reference not found: ${ref}`);
     }
@@ -20437,6 +20437,7 @@ var init_v4 = __esm({
 
 // src/server/index.ts
 import { readFile } from "node:fs/promises";
+import path2 from "node:path";
 import { readFileSync } from "node:fs";
 
 // node_modules/@modelcontextprotocol/server/dist/chunk-vYduTEsO.mjs
@@ -24078,9 +24079,9 @@ var rev2026Codec = {
     });
     const parsed = buildSchemas2026().RequestMetaEnvelopeSchema.safeParse(meta3);
     if (!parsed.success) for (const issue2 of parsed.error.issues) {
-      const path = issue2.path.map(String);
-      const key = path.length > 0 ? path.join(".") : "_meta";
-      if (path.length === 1 && issues.some((existing) => existing.key === key && existing.problem === "missing")) continue;
+      const path3 = issue2.path.map(String);
+      const key = path3.length > 0 ? path3.join(".") : "_meta";
+      if (path3.length === 1 && issues.some((existing) => existing.key === key && existing.problem === "missing")) continue;
       issues.push({
         key,
         problem: issue2.message
@@ -24407,17 +24408,17 @@ function scanXMcpHeaderDeclarations(inputSchema) {
   const declarations = [];
   const seenLower = /* @__PURE__ */ new Map();
   let numberFault;
-  const visit2 = (node2, path, reachable) => {
+  const visit2 = (node2, path3, reachable) => {
     if (node2 === null || typeof node2 !== "object") return void 0;
     const schema = node2;
     if (X_MCP_HEADER_KEY in schema) {
-      if (!reachable || path.length === 0) return `${pathName(path)}: x-mcp-header is only permitted on properties statically reachable via a chain of 'properties' keys (not under items, additionalProperties, oneOf/anyOf/allOf/not, if/then/else, or $ref)`;
+      if (!reachable || path3.length === 0) return `${pathName(path3)}: x-mcp-header is only permitted on properties statically reachable via a chain of 'properties' keys (not under items, additionalProperties, oneOf/anyOf/allOf/not, if/then/else, or $ref)`;
       const raw = schema[X_MCP_HEADER_KEY];
-      if (typeof raw !== "string" || raw.length === 0) return `${pathName(path)}: x-mcp-header MUST be a non-empty string`;
-      if (!RFC9110_TOKEN.test(raw)) return `${pathName(path)}: x-mcp-header '${raw}' is not a valid RFC 9110 token (no spaces, control characters or HTTP delimiters)`;
+      if (typeof raw !== "string" || raw.length === 0) return `${pathName(path3)}: x-mcp-header MUST be a non-empty string`;
+      if (!RFC9110_TOKEN.test(raw)) return `${pathName(path3)}: x-mcp-header '${raw}' is not a valid RFC 9110 token (no spaces, control characters or HTTP delimiters)`;
       const type = typeof schema.type === "string" ? schema.type : void 0;
       if (type === void 0 || !PERMITTED_X_MCP_HEADER_TYPES.has(type)) {
-        const fault$1 = `${pathName(path)}: x-mcp-header is only permitted on primitive-typed properties (string, integer, boolean); got ${type ?? "<none>"}`;
+        const fault$1 = `${pathName(path3)}: x-mcp-header is only permitted on primitive-typed properties (string, integer, boolean); got ${type ?? "<none>"}`;
         if (type !== "number") return fault$1;
         numberFault ??= fault$1;
       }
@@ -24426,14 +24427,14 @@ function scanXMcpHeaderDeclarations(inputSchema) {
       if (prior !== void 0) return `x-mcp-header '${raw}' is not case-insensitively unique (also declared as '${prior}')`;
       seenLower.set(lower, raw);
       declarations.push({
-        path,
+        path: path3,
         headerName: raw,
         type
       });
     }
     const properties = schema.properties;
     if (properties !== null && typeof properties === "object") for (const [key, child] of Object.entries(properties)) {
-      const fault$1 = visit2(child, [...path, key], reachable);
+      const fault$1 = visit2(child, [...path3, key], reachable);
       if (fault$1 !== void 0) return fault$1;
     }
     for (const k2 of NON_REACHABLE_SUBSCHEMA_KEYWORDS) {
@@ -24441,7 +24442,7 @@ function scanXMcpHeaderDeclarations(inputSchema) {
       if (sub === void 0) continue;
       const branches = Array.isArray(sub) ? sub : sub !== null && typeof sub === "object" && OBJECT_VALUED_SUBSCHEMA_KEYWORDS.has(k2) ? Object.values(sub) : [sub];
       for (const branch of branches) {
-        const fault$1 = visit2(branch, [...path, `<${k2}>`], false);
+        const fault$1 = visit2(branch, [...path3, `<${k2}>`], false);
         if (fault$1 !== void 0) return fault$1;
       }
     }
@@ -24486,8 +24487,8 @@ var OBJECT_VALUED_SUBSCHEMA_KEYWORDS = /* @__PURE__ */ new Set([
   "$defs",
   "definitions"
 ]);
-function pathName(path) {
-  return path.length === 0 ? "<root>" : path.join(".");
+function pathName(path3) {
+  return path3.length === 0 ? "<root>" : path3.join(".");
 }
 var HEADER_MISMATCH_ERROR_CODE = -32020;
 var INBOUND_VALIDATION_LADDER = [
@@ -24779,7 +24780,7 @@ var PROPERTY_KEYS_BY_TYPE = {
   array: shapeKeys([UntitledMultiSelectEnumSchemaSchema, TitledMultiSelectEnumSchemaSchema])
 };
 var SUPPORTED_STRING_FORMATS = new Set(StringSchemaSchema.shape.format.unwrap().options);
-function walkProperty(node2, path, vendor, unsupported) {
+function walkProperty(node2, path3, vendor, unsupported) {
   if (!isJsonObject(node2)) return node2;
   const allowedKeys = typeof node2.type === "string" && Object.hasOwn(PROPERTY_KEYS_BY_TYPE, node2.type) ? PROPERTY_KEYS_BY_TYPE[node2.type] : void 0;
   if (allowedKeys === void 0) return node2;
@@ -24787,8 +24788,8 @@ function walkProperty(node2, path, vendor, unsupported) {
   for (const [key, value] of Object.entries(node2)) if (allowedKeys.has(key) || isAnnotationOnlyJsonSchemaKeyword(key)) pruned[key] = value;
   else if (key === "pattern" && node2.type === "string" && typeof node2.format === "string") {
     if (!SUPPORTED_STRING_FORMATS.has(node2.format)) pruned[key] = value;
-    else if (typeof value !== "string" || !isLibraryFormatPattern(node2.format, value, vendor)) unsupported.push(`${path}.${key}`);
-  } else unsupported.push(`${path}.${key}`);
+    else if (typeof value !== "string" || !isLibraryFormatPattern(node2.format, value, vendor)) unsupported.push(`${path3}.${key}`);
+  } else unsupported.push(`${path3}.${key}`);
   return pruned;
 }
 function walkRequestedSchema(converted, vendor) {
@@ -24805,11 +24806,11 @@ function describeUnsupportedProperties(pruned, fallback) {
   const offenders = Object.entries(pruned.properties).filter(([, node2]) => !parseSchema(PrimitiveSchemaDefinitionSchema, node2).success).map(([name]) => `properties.${name}`);
   return offenders.length > 0 ? offenders.join(", ") : fallback;
 }
-function findDroppedConstraintPaths(original, parsed, path = "") {
-  if (Array.isArray(original) && Array.isArray(parsed)) return original.flatMap((item, index) => findDroppedConstraintPaths(item, parsed[index], `${path}[${index}]`));
+function findDroppedConstraintPaths(original, parsed, path3 = "") {
+  if (Array.isArray(original) && Array.isArray(parsed)) return original.flatMap((item, index) => findDroppedConstraintPaths(item, parsed[index], `${path3}[${index}]`));
   if (!isJsonObject(original) || !isJsonObject(parsed)) return [];
   return Object.entries(original).flatMap(([key, value]) => {
-    const childPath = path ? `${path}.${key}` : key;
+    const childPath = path3 ? `${path3}.${key}` : key;
     if (!Object.prototype.hasOwnProperty.call(parsed, key)) return isAnnotationOnlyJsonSchemaKeyword(key) ? [] : [childPath];
     return findDroppedConstraintPaths(value, parsed[key], childPath);
   });
@@ -28955,8 +28956,8 @@ var require_utils = /* @__PURE__ */ __commonJSMin(((exports, module) => {
     for (let i = 0; i < str.length; i++) if (str[i] === token) ind++;
     return ind;
   }
-  function removeDotSegments(path) {
-    let input2 = path;
+  function removeDotSegments(path3) {
+    let input2 = path3;
     const output2 = [];
     let nextSlash = -1;
     let len = 0;
@@ -29294,8 +29295,8 @@ var require_schemes = /* @__PURE__ */ __commonJSMin(((exports, module) => {
     }
     if (wsComponent.resourceName) {
       const queryIndex = wsComponent.resourceName.indexOf("?");
-      const path = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
-      wsComponent.path = path && path !== "/" ? path : void 0;
+      const path3 = queryIndex === -1 ? wsComponent.resourceName : wsComponent.resourceName.slice(0, queryIndex);
+      wsComponent.path = path3 && path3 !== "/" ? path3 : void 0;
       wsComponent.query = queryIndex === -1 ? void 0 : wsComponent.resourceName.slice(queryIndex + 1);
       wsComponent.resourceName = void 0;
     }
@@ -33482,7 +33483,7 @@ var AjvJsonSchemaValidator = class {
 var Ajv = import_ajv.Ajv;
 
 // node_modules/@modelcontextprotocol/server/dist/shimsNode.mjs
-import process from "node:process";
+import process2 from "node:process";
 
 // node_modules/@modelcontextprotocol/server/dist/mcp-oHn3ureC.mjs
 var COMPLETABLE_SYMBOL = /* @__PURE__ */ Symbol.for("mcp.completable");
@@ -35344,7 +35345,7 @@ var StdioServerTransport = class {
   _readBuffer;
   _started = false;
   _closed = false;
-  constructor(_stdin = process.stdin, _stdout = process.stdout, options) {
+  constructor(_stdin = process2.stdin, _stdout = process2.stdout, options) {
     this._stdin = _stdin;
     this._stdout = _stdout;
     this._readBuffer = new ReadBuffer({ maxBufferSize: options?.maxBufferSize });
@@ -38933,7 +38934,7 @@ var p = "text/html;profile=mcp-app";
 var plugin_default = {
   $schema: "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   name: "notebook",
-  version: "0.1.1",
+  version: "0.1.4",
   description: "A small notebook that demonstrates a Codex plugin with an OpenAI UI.",
   license: "MIT",
   author: {
@@ -38979,15 +38980,41 @@ var noteSchema = noteInput.extend({
   updatedAt: external_exports.string().datetime()
 });
 var snapshotSchema = external_exports.object({ notes: external_exports.array(noteSchema) });
-function createNotebook(now = () => /* @__PURE__ */ new Date()) {
-  let notes = [
+function sampleNotes(now = () => /* @__PURE__ */ new Date()) {
+  return [
     { id: "small-idea", title: "Start with a small idea", body: "The most useful things often begin as a sentence. Leave room for a rough edge, a question, or a possibility. You can shape it later.", kind: "idea", favorite: true, updatedAt: now().toISOString() },
     { id: "fewer-things", title: "Fewer things, done thoughtfully", body: "A clear starting point. One useful interaction. Enough space to think. A little restraint can make the whole experience feel better.", kind: "draft", favorite: false, updatedAt: now().toISOString() },
     { id: "good-question", title: "Keep a good question close", body: "What would make this easier for someone trying it for the first time? That is usually a good place to begin.", kind: "reference", favorite: false, updatedAt: now().toISOString() }
   ];
-  const snapshot = () => ({ notes: notes.map((note) => ({ ...note })) });
+}
+function createMemoryNoteStore(initial, persist) {
+  let notes = initial.map((note) => ({ ...note }));
+  const list = () => notes.map((note) => ({ ...note }));
+  function save(next) {
+    persist?.(next.map((note) => ({ ...note })));
+    notes = next;
+  }
+  return {
+    list,
+    get(id) {
+      return list().find((note) => note.id === id);
+    },
+    insert(note) {
+      save([{ ...note }, ...notes]);
+    },
+    updateContent(id, input2, updatedAt) {
+      save(notes.map((note) => note.id === id ? { ...note, ...input2, updatedAt } : note));
+    },
+    setFavorite(id, favorite) {
+      save(notes.map((note) => note.id === id ? { ...note, favorite } : note));
+    }
+  };
+}
+function createNotebook(now = () => /* @__PURE__ */ new Date(), storage) {
+  const store = storage ?? createMemoryNoteStore(sampleNotes(now));
+  const snapshot = () => ({ notes: store.list() });
   function find(id) {
-    const note = notes.find((note2) => note2.id === id);
+    const note = store.get(id);
     if (!note) throw new Error("That note no longer exists. Reload your notebook and try again.");
     return note;
   }
@@ -38995,24 +39022,101 @@ function createNotebook(now = () => /* @__PURE__ */ new Date()) {
     snapshot,
     create(input2) {
       const parsed = noteInput.parse(input2);
-      if (notes.length >= 100) throw new Error("This sample notebook holds up to 100 notes. Restart the sample to reset it.");
-      notes = [{ ...parsed, id: crypto.randomUUID(), favorite: false, updatedAt: now().toISOString() }, ...notes];
+      store.insert({ ...parsed, id: crypto.randomUUID(), favorite: false, updatedAt: now().toISOString() });
       return snapshot();
     },
     update(input2) {
       const { id, ...fields } = noteInput.extend({ id: external_exports.string().min(1) }).parse(input2);
       const note = find(id);
       if (note.title !== fields.title || note.body !== fields.body || note.kind !== fields.kind) {
-        Object.assign(note, fields, { updatedAt: now().toISOString() });
+        store.updateContent(id, fields, now().toISOString());
       }
       return snapshot();
     },
     favorite(input2) {
       const { id, favorite } = external_exports.object({ id: external_exports.string().min(1), favorite: external_exports.boolean() }).parse(input2);
-      find(id).favorite = favorite;
+      find(id);
+      store.setFavorite(id, favorite);
       return snapshot();
     }
   };
+}
+
+// src/server/storage.ts
+import { closeSync, mkdirSync, openSync } from "node:fs";
+import os from "node:os";
+import path from "node:path";
+import { DatabaseSync } from "node:sqlite";
+function notebookDataDirectory(name, env = process.env, platform = process.platform, home = os.homedir()) {
+  if (env.NOTEBOOK_DATA_DIR) {
+    if (!path.isAbsolute(env.NOTEBOOK_DATA_DIR)) throw new Error("NOTEBOOK_DATA_DIR must be an absolute path.");
+    return env.NOTEBOOK_DATA_DIR;
+  }
+  const base = platform === "darwin" ? path.join(home, "Library", "Application Support") : platform === "win32" ? env.LOCALAPPDATA || path.join(home, "AppData", "Local") : env.XDG_DATA_HOME && path.isAbsolute(env.XDG_DATA_HOME) ? env.XDG_DATA_HOME : path.join(home, ".local", "share");
+  return path.join(base, name);
+}
+function createSqliteNoteStore(filename) {
+  mkdirSync(path.dirname(filename), { recursive: true, mode: 448 });
+  closeSync(openSync(filename, "a", 384));
+  const db = new DatabaseSync(filename);
+  try {
+    db.exec("PRAGMA busy_timeout = 5000; PRAGMA journal_mode = WAL;");
+    db.exec("BEGIN IMMEDIATE");
+    try {
+      const version2 = db.prepare("PRAGMA user_version").get()?.user_version;
+      if (version2 === 0) {
+        db.exec(`CREATE TABLE notes (
+          sequence INTEGER PRIMARY KEY AUTOINCREMENT,
+          id TEXT NOT NULL UNIQUE,
+          title TEXT NOT NULL,
+          body TEXT NOT NULL,
+          kind TEXT NOT NULL CHECK (kind IN ('idea', 'draft', 'reference')),
+          favorite INTEGER NOT NULL CHECK (favorite IN (0, 1)),
+          updatedAt TEXT NOT NULL
+        ) STRICT`);
+        const seed = db.prepare("INSERT INTO notes (id, title, body, kind, favorite, updatedAt) VALUES (?, ?, ?, ?, ?, ?)");
+        for (const note of sampleNotes().reverse()) seed.run(note.id, note.title, note.body, note.kind, Number(note.favorite), note.updatedAt);
+        db.exec("PRAGMA user_version = 1");
+      } else if (version2 !== 1) {
+        throw new Error("This notebook database needs a newer plugin version.");
+      }
+      db.exec("COMMIT");
+    } catch (error62) {
+      db.exec("ROLLBACK");
+      throw error62;
+    }
+    const columns = "id, title, body, kind, favorite, updatedAt";
+    const all = db.prepare(`SELECT ${columns} FROM notes ORDER BY sequence DESC`);
+    const get = db.prepare(`SELECT ${columns} FROM notes WHERE id = ?`);
+    const insert = db.prepare("INSERT INTO notes (id, title, body, kind, favorite, updatedAt) VALUES (?, ?, ?, ?, ?, ?)");
+    const update = db.prepare("UPDATE notes SET title = ?, body = ?, kind = ?, updatedAt = ? WHERE id = ?");
+    const favorite = db.prepare("UPDATE notes SET favorite = ? WHERE id = ?");
+    const read = (row) => noteSchema.parse({ ...row, favorite: row.favorite === 1 });
+    return {
+      list() {
+        return all.all().map(read);
+      },
+      get(id) {
+        const row = get.get(id);
+        return row ? read(row) : void 0;
+      },
+      insert(note) {
+        insert.run(note.id, note.title, note.body, note.kind, Number(note.favorite), note.updatedAt);
+      },
+      updateContent(id, input2, updatedAt) {
+        update.run(input2.title, input2.body, input2.kind, updatedAt, id);
+      },
+      setFavorite(id, value) {
+        favorite.run(Number(value), id);
+      },
+      close() {
+        db.close();
+      }
+    };
+  } catch (error62) {
+    db.close();
+    throw error62;
+  }
 }
 
 // src/server/index.ts
@@ -39021,9 +39125,11 @@ var icon = `data:image/svg+xml;base64,${readFileSync(new URL("../../assets/icon.
 function createServer() {
   const server = new McpServer({ name: plugin_default.name, version: plugin_default.version });
   new OpenAIExtensions(server);
-  const notebook = createNotebook();
+  const storage = createSqliteNoteStore(path2.join(notebookDataDirectory(plugin_default.name), "notebook.sqlite3"));
+  const notebook = createNotebook(void 0, storage);
+  server.server.onclose = () => storage.close();
   const result = (snapshot) => ({
-    content: [{ type: "text", text: `${snapshot.notes.length} notes in your sample notebook.` }],
+    content: [{ type: "text", text: `${snapshot.notes.length} notes in your notebook.` }],
     structuredContent: snapshot
   });
   server.registerResource("Notebook view", viewUri, {
@@ -39041,7 +39147,7 @@ function createServer() {
   server.registerTool("notebook_open", {
     title: plugin_default.extensions["com.openai"].interface.displayName,
     icons: [{ src: icon, mimeType: "image/svg+xml", sizes: ["any"] }],
-    description: "Open the sample notebook and read all notes. Notes reset when this server restarts.",
+    description: "Open the notebook and read all notes saved in its local SQLite database.",
     inputSchema: external_exports.object({}),
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     _meta: {
@@ -39051,21 +39157,21 @@ function createServer() {
   }, async () => result(notebook.snapshot()));
   server.registerTool("notebook_create", {
     title: "Create a note",
-    description: "Create one note in the sample notebook. This changes only the current server session.",
+    description: "Create one note and save it in the local SQLite database. It persists across restarts.",
     inputSchema: noteInput,
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: false, openWorldHint: false },
     _meta: { ui: { resourceUri: viewUri } }
   }, async (input2) => result(notebook.create(input2)));
   server.registerTool("notebook_update", {
     title: "Update a note",
-    description: "Replace the title, body, and kind of one existing sample note, preserving its favorite setting.",
+    description: "Replace the title, body, and kind of one existing note, preserving its favorite setting.",
     inputSchema: noteInput.extend({ id: external_exports.string().min(1) }),
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     _meta: { ui: { resourceUri: viewUri } }
   }, async (input2) => result(notebook.update(input2)));
   server.registerTool("notebook_favorite", {
     title: "Set a favorite",
-    description: "Set or clear the favorite flag of one existing sample note.",
+    description: "Set or clear the favorite flag of one existing note.",
     inputSchema: external_exports.object({ id: external_exports.string().min(1), favorite: external_exports.boolean() }),
     annotations: { readOnlyHint: false, destructiveHint: false, idempotentHint: true, openWorldHint: false },
     _meta: { ui: { resourceUri: viewUri } }
