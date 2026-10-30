@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.4
+
+- Close SQLite test connections before removing temporary files on Windows.
+- Includes the Codex action and persistent storage from 0.1.3, whose release was stopped by this test cleanup failure.
+
 ## 0.1.3
 
 - Send a selected note to the Codex conversation with **Work on this with Codex**. Unsupported hosts and the browser preview offer a copyable prompt.

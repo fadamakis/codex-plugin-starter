@@ -7,16 +7,16 @@ import { DatabaseSync } from 'node:sqlite';
 import { createMemoryNoteStore, createNotebook, sampleNotes } from '../src/shared/notebook';
 import { createSqliteNoteStore, notebookDataDirectory } from '../src/server/storage';
 
-function database(t: { after(fn: () => void): void }) {
+function database(t: { after(fn: () => void): void }, close = () => {}) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'notebook-storage-'));
-  t.after(() => fs.rmSync(directory, { recursive: true, force: true }));
+  t.after(() => { close(); fs.rmSync(directory, { recursive: true, force: true }); });
   return path.join(directory, 'data', 'notebook.sqlite3');
 }
 
 test('SQLite keeps created notes, edits, favorites, and sample IDs across restarts', t => {
-  const filename = database(t);
-  let store = createSqliteNoteStore(filename);
-  t.after(() => store.close());
+  let store: ReturnType<typeof createSqliteNoteStore>;
+  const filename = database(t, () => store?.close());
+  store = createSqliteNoteStore(filename);
   const notebook = createNotebook(undefined, store);
   const initial = notebook.snapshot();
   const note = notebook.create({ title: "A 'quoted' title", body: "'); DROP TABLE notes; --", kind: 'idea' }).notes[0];
@@ -34,10 +34,10 @@ test('SQLite keeps created notes, edits, favorites, and sample IDs across restar
 });
 
 test('independent SQLite connections see each other’s changes without replacing unrelated fields', t => {
-  const filename = database(t);
-  const first = createSqliteNoteStore(filename);
-  const second = createSqliteNoteStore(filename);
-  t.after(() => { first.close(); second.close(); });
+  let first: ReturnType<typeof createSqliteNoteStore>, second: ReturnType<typeof createSqliteNoteStore>;
+  const filename = database(t, () => { first?.close(); second?.close(); });
+  first = createSqliteNoteStore(filename);
+  second = createSqliteNoteStore(filename);
   const a = createNotebook(undefined, first), b = createNotebook(undefined, second);
   const note = a.create({ title: 'From the panel', body: 'Keep this.', kind: 'idea' }).notes[0];
   b.create({ title: 'From the conversation', body: 'Keep this too.', kind: 'draft' });
