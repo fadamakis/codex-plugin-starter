@@ -9,4 +9,4 @@ Local automated checks passed: 10 unit tests, 14 browser tests, type checking, p
 
 The recording plan is to show the selected note reaching Codex, discuss a plan, save it as a new draft with Notebook's tools, and show that draft beside the original.
 
-The public release and its CI checks are still pending. Version 0.1.1 remains the published marketplace build.
+The tagged GitHub Actions workflow checks the release on Linux, macOS, and Windows before publishing the prebuilt marketplace and ZIP.
